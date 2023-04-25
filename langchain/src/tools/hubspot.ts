@@ -10,6 +10,19 @@ class GetAllDealsInDefaultPipeline extends Tool {
 
   description = "Fetches all deals in the default pipeline";
 
+  apiKey: string | undefined;
+
+  constructor(
+    apiKey: string | undefined = typeof process !== "undefined"
+      ? // eslint-disable-next-line no-process-env
+        process.env?.HUBSPOT_API_KEY
+      : undefined,
+  ) {
+    super();
+
+    this.apiKey = apiKey;
+  }
+
   async _call(pipeline: string): Promise<string> {
     const allDeals = await this.getAllDealsInDefaultPipeline(pipeline);
     return JSON.stringify(allDeals);
@@ -73,7 +86,7 @@ class GetAllDealsInDefaultPipeline extends Tool {
     if (client === undefined) {
       client = new hubspot.Client({
         // eslint-disable-next-line no-process-env
-        accessToken: process.env.HUBSPOT_API_KEY as string,
+        accessToken: this.apiKey,
       });
     }
     return client;
